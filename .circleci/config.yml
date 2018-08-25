@@ -358,6 +358,11 @@ workflows:
         baseTag: readmyhub
         addLabels: true
         docker_version: 18.06.1
+        prepare:
+        - run:
+            name: Copy README.md
+            command: |
+              cp -v README.md tests/README.md
         login:
         - run:
             name: Login to Docker Hub
