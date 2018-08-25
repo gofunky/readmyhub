@@ -8,7 +8,7 @@ docker_login_params: &docker_login_params
   login:
     description: "Login command to your repository (using environment variables from your secure context)"
     type: string
-    default: echo "Login SKIPPED"
+    default: echo "Login is UNSPECIFIED"
 
 docker_arg_params: &docker_arg_params
   # Remove this once CircleCI-Public/config-preview-sdk#15 is merged
@@ -103,6 +103,8 @@ orbs:
             command: |
               if [ "${CIRCLE_BRANCH}" == "<< parameters.branch >>" ]; then
                 << parameters.login >>
+              else
+                echo "Login SKIPPED"
               fi
       build:
         parameters:
@@ -242,6 +244,8 @@ orbs:
                 for tag in $tags; do
                   docker push "$tag"
                 done
+              else
+                echo "Push SKIPPED"
               fi
     jobs:
       build:
