@@ -230,7 +230,7 @@ orbs:
         - run:
             name: Run Docker compose tests
             command: |
-              docker-compose -f "<< parameters.compose >>" up --exit-code-from sut --build
+              docker-compose -f "<< parameters.compose >>" up --exit-code-from sut --build --abort-on-container-exit
       push:
         parameters:
           <<: *docker_tags_params
