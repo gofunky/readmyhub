@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/gofunky/readmyhub/tree/master.svg?style=shield)](https://circleci.com/gh/gofunky/readmyhub/tree/master)
 [![Microbadger Version](https://images.microbadger.com/badges/version/gofunky/readmyhub.svg)](https://microbadger.com/images/gofunky/readmyhub "Docker Version")
 [![Microbadger Layers](https://images.microbadger.com/badges/image/gofunky/readmyhub.svg)](https://microbadger.com/images/gofunky/readmyhub "Docker Layers")
-[![Docker Pulls](https://img.shields.io/docker/pulls/gofunky/golang.svg)](https://hub.docker.com/r/gofunky/golang)
+[![Docker Pulls](https://img.shields.io/docker/pulls/gofunky/readmyhub.svg)](https://hub.docker.com/r/gofunky/readmyhub)
 ![GitHub License](https://img.shields.io/github/license/gofunky/readmyhub.svg)
 
 This Docker image enables you to push README.md files to the Docker Hub.
