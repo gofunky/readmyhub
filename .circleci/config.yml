@@ -1,3 +1,15 @@
+docker_branch_params: &docker_branch_params
+  branch:
+    description: "Only push from the given branch"
+    type: string
+    default: master
+
+docker_login_params: &docker_login_params
+  login:
+    description: "Login command to your repository (using environment variables from your secure context)"
+    type: string
+    default: echo "Login SKIPPED"
+
 docker_arg_params: &docker_arg_params
   # Remove this once CircleCI-Public/config-preview-sdk#15 is merged
   useArgs:
@@ -83,12 +95,15 @@ orbs:
     commands:
       login:
         parameters:
-          login:
-            description: "Login to your repository"
-            type: steps
-            default: []
+          <<: *docker_login_params
+          <<: *docker_branch_params
         steps:
-        - steps: << parameters.login >>
+        - run:
+            name: "Login to your origin Docker repository"
+            command: |
+              if [ "${CIRCLE_BRANCH}" == "<< parameters.branch >>" ]; then
+                << parameters.login >>
+              fi
       build:
         parameters:
           <<: *docker_arg_params
@@ -217,9 +232,7 @@ orbs:
       push:
         parameters:
           <<: *docker_tags_params
-          branch:
-            description: "Only push from the given branch"
-            type: string
+          <<: *docker_branch_params
         steps:
         - deploy:
             name: Push application Docker image
@@ -282,14 +295,8 @@ orbs:
           <<: *docker_build_params
           <<: *docker_tags_params
           <<: *docker_version_params
-          login:
-            description: "Login to your repository"
-            type: steps
-            default: []
-          branch:
-            description: "Only push from the given branch"
-            type: string
-            default: master
+          <<: *docker_branch_params
+          <<: *docker_login_params
         steps:
         - build:
             <<: *docker_build_args
@@ -303,6 +310,7 @@ orbs:
                 baseTag: << parameters.baseTag >>
             - login:
                 login: << parameters.login >>
+                branch: << parameters.branch >>
             - push:
                 tags: << parameters.tags >>
                 branch: << parameters.branch >>
@@ -318,14 +326,8 @@ orbs:
           <<: *docker_build_params
           <<: *docker_tags_params
           <<: *docker_version_params
-          login:
-            description: "Login to your repository"
-            type: steps
-            default: []
-          branch:
-            description: "Only push from the given branch"
-            type: string
-            default: master
+          <<: *docker_branch_params
+          <<: *docker_login_params
           compose:
             description: "Path to the docker compose test file to test"
             type: string
@@ -345,6 +347,7 @@ orbs:
                 compose: << parameters.compose >>
             - login:
                 login: << parameters.login >>
+                branch: << parameters.branch >>
             - push:
                 tags: << parameters.tags >>
                 branch: << parameters.branch >>
@@ -363,9 +366,5 @@ workflows:
             name: Copy README.md
             command: |
               cp -v README.md tests/README.md
-        login:
-        - run:
-            name: Login to Docker Hub
-            command: |
-              docker login -u $DOCKER_USR -p $DOCKER_PWD
+        login: docker login -u $DOCKER_USR -p $DOCKER_PWD
         tags: "gofunky/readmyhub:latest"
