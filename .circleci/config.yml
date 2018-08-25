@@ -373,7 +373,7 @@ workflows:
     - dockerorb/build-test-push:
         name: build-release
         <<: *readmyhub_job
-        tags: "gofunky/readmyhub:`git describe --abbrev=0 --tags`,gofunky/readmyhub:stable"
+        tags: "gofunky/readmyhub:stable,gofunky/readmyhub:`git describe --abbrev=0 --tags`"
         filters:
           tags:
             only: /.*/
@@ -385,7 +385,7 @@ workflows:
         file: "Dockerfile-git"
         useArgs: true
         args: "BASE_VERSION=`git describe --abbrev=0 --tags`"
-        tags: "gofunky/readmyhub:`git describe --abbrev=0 --tags`-git,gofunky/readmyhub:stable-git"
+        tags: "gofunky/readmyhub:stable-git,gofunky/readmyhub:`git describe --abbrev=0 --tags`-git"
         requires:
         - build-release
         filters:
