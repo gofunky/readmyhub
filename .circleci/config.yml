@@ -1,9 +1,3 @@
-docker_branch_params: &docker_branch_params
-  branch:
-    description: "Only push from the given branch"
-    type: string
-    default: master
-
 docker_login_params: &docker_login_params
   login:
     description: "Login command to your repository (using environment variables from your secure context)"
@@ -96,16 +90,11 @@ orbs:
       login:
         parameters:
           <<: *docker_login_params
-          <<: *docker_branch_params
         steps:
         - run:
             name: "Login to your origin Docker repository"
             command: |
-              if [ "${CIRCLE_BRANCH}" == "<< parameters.branch >>" ]; then
-                << parameters.login >>
-              else
-                echo "Login SKIPPED"
-              fi
+              << parameters.login >>
       build:
         parameters:
           <<: *docker_arg_params
@@ -234,19 +223,14 @@ orbs:
       push:
         parameters:
           <<: *docker_tags_params
-          <<: *docker_branch_params
         steps:
         - deploy:
             name: Push application Docker image
             command: |
               tags="<< parameters.tags >>"
-              if [ "${CIRCLE_BRANCH}" == "<< parameters.branch >>" ]; then
-                for tag in $tags; do
-                  docker push "$tag"
-                done
-              else
-                echo "Push SKIPPED"
-              fi
+              for tag in $tags; do
+                docker push "$tag"
+              done
     jobs:
       build:
         description: "Build Docker image"
@@ -299,7 +283,6 @@ orbs:
           <<: *docker_build_params
           <<: *docker_tags_params
           <<: *docker_version_params
-          <<: *docker_branch_params
           <<: *docker_login_params
         steps:
         - build:
@@ -314,10 +297,8 @@ orbs:
                 baseTag: << parameters.baseTag >>
             - login:
                 login: << parameters.login >>
-                branch: << parameters.branch >>
             - push:
                 tags: << parameters.tags >>
-                branch: << parameters.branch >>
 
       build-test-push:
         description: "Build and push Docker image"
@@ -330,7 +311,6 @@ orbs:
           <<: *docker_build_params
           <<: *docker_tags_params
           <<: *docker_version_params
-          <<: *docker_branch_params
           <<: *docker_login_params
           compose:
             description: "Path to the docker compose test file to test"
@@ -351,10 +331,8 @@ orbs:
                 compose: << parameters.compose >>
             - login:
                 login: << parameters.login >>
-                branch: << parameters.branch >>
             - push:
                 tags: << parameters.tags >>
-                branch: << parameters.branch >>
 
 version: 2.1
 workflows:
@@ -371,4 +349,9 @@ workflows:
             command: |
               cp -v README.md tests/README.md
         login: docker login -u $DOCKER_USR -p $DOCKER_PWD
+        file: "docker-compose.yml"
         tags: "gofunky/readmyhub:latest"
+        filters:
+          branches:
+            only:
+              - master
