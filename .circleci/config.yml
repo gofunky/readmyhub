@@ -337,6 +337,7 @@ workflows:
   build:
     jobs:
     - dockerorb/build-test-push:
+        compose: docker-compose.yml
         context: docker-hub
         baseTag: readmyhub
         addLabels: true
