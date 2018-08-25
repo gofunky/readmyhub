@@ -2,8 +2,8 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f73fa712e4e940bfbe775d2d9e2030ca)](https://app.codacy.com/app/gofunky/readmyhub?utm_source=github.com&utm_medium=referral&utm_content=gofunky/readmyhub&utm_campaign=Badge_Grade_Settings)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=gofunky/readmyhub)](https://dependabot.com)
 [![CircleCI](https://circleci.com/gh/gofunky/readmyhub/tree/master.svg?style=shield)](https://circleci.com/gh/gofunky/readmyhub/tree/master)
-[![Microbadger Version](https://images.microbadger.com/badges/version/gofunky/readmyhub.svg)](https://microbadger.com/images/gofunky/readmyhub "Docker Version")
-[![Microbadger Layers](https://images.microbadger.com/badges/image/gofunky/readmyhub.svg)](https://microbadger.com/images/gofunky/readmyhub "Docker Layers")
+[![Microbadger Version](https://images.microbadger.com/badges/version/gofunky/readmyhub:stable.svg)](https://microbadger.com/images/gofunky/readmyhub:stable "Docker Version")
+[![Microbadger Layers](https://images.microbadger.com/badges/image/gofunky/readmyhub:stable.svg)](https://microbadger.com/images/gofunky/readmyhub:stable "Docker Layers")
 [![Docker Pulls](https://img.shields.io/docker/pulls/gofunky/readmyhub.svg)](https://hub.docker.com/r/gofunky/readmyhub)
 ![GitHub License](https://img.shields.io/github/license/gofunky/readmyhub.svg)
 
@@ -20,7 +20,7 @@ docker run --rm \
     -e DOCKERHUB_PWD=myhubpassword \
     -e DOCKERHUB_ORG=myorga \
     -e DOCKERHUB_REPO=myrepo \
-     gofunky/radmyhub
+     gofunky/readmyhub:stable
 ```
 
 That's it.
