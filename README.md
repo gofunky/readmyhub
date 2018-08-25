@@ -1,9 +1,14 @@
-README to Docker Hub
-===
+# README to Docker Hub
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=gofunky/readmyhub)](https://dependabot.com)
+[![CircleCI](https://circleci.com/gh/gofunky/readmyhub/tree/master.svg?style=shield)](https://circleci.com/gh/gofunky/readmyhub/tree/master)
+[![Microbadger Version](https://images.microbadger.com/badges/version/gofunky/readmyhub.svg)](https://microbadger.com/images/gofunky/readmyhub "Docker Version")
+[![Microbadger Layers](https://images.microbadger.com/badges/image/gofunky/readmyhub.svg)](https://microbadger.com/images/gofunky/readmyhub "Docker Layers")
+[![Docker Pulls](https://img.shields.io/docker/pulls/gofunky/golang.svg)](https://hub.docker.com/r/gofunky/golang)
+![GitHub License](https://img.shields.io/github/license/gofunky/readmyhub.svg)
 
-This is a quick hack to push README.md files to Docker hub.
+This Docker image enables you to push README.md files to the Docker Hub.
 
-# How to use?
+## How to use?
 
 Run it with all required parameters:
 
@@ -20,7 +25,7 @@ docker run --rm \
 That's it.
 
 
-## Environment variables
+### Environment variables
 
 This image uses environment variables for configuration.
 
@@ -33,7 +38,7 @@ This image uses environment variables for configuration.
 |`README_PATH`           |`/data/README.md`    |Path to the README.me to push                       |
 
 
-## Mount the README.md
+### Mount the README.md
 
 By default, if the `README_PATH` environment variable is not set, this image always pushes the file
 `/data/README.md` as full description to Docker Hub.
@@ -44,6 +49,6 @@ If your description is not named `README.md` mount the file directory using `-v 
 
 *Notice that the filename is case sensitive. If your readme is called `readme.md` you have to mount the file directly, not the directory*
 
-# Additional Information
+## Additional Information
 
 The user you use to push the README.md need to be admin of the repository.
