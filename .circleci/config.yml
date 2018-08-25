@@ -349,7 +349,7 @@ workflows:
             command: |
               cp -v README.md tests/README.md
         login: docker login -u $DOCKER_USR -p $DOCKER_PWD
-        file: "docker-compose.yml"
+        compose: docker-compose.yml
         tags: "gofunky/readmyhub:latest"
         filters:
           branches:
