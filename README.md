@@ -1,4 +1,5 @@
 # README to Docker Hub
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f73fa712e4e940bfbe775d2d9e2030ca)](https://app.codacy.com/app/gofunky/readmyhub?utm_source=github.com&utm_medium=referral&utm_content=gofunky/readmyhub&utm_campaign=Badge_Grade_Settings)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=gofunky/readmyhub)](https://dependabot.com)
 [![CircleCI](https://circleci.com/gh/gofunky/readmyhub/tree/master.svg?style=shield)](https://circleci.com/gh/gofunky/readmyhub/tree/master)
 [![Microbadger Version](https://images.microbadger.com/badges/version/gofunky/readmyhub.svg)](https://microbadger.com/images/gofunky/readmyhub "Docker Version")
