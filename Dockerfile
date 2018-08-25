@@ -2,6 +2,8 @@ FROM node:10.9-alpine
 
 WORKDIR /app/
 
+RUN apk add --no-cache git
+
 COPY index.js package.json /app/
 
 RUN npm install
