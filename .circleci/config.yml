@@ -269,8 +269,6 @@ orbs:
             baseTag: << parameters.baseTag >>
         - test:
             compose: << parameters.compose >>
-            composeversion:
-
 
       build-push:
         description: "Build and push Docker image"
