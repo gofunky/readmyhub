@@ -1,3 +1,17 @@
+attach_params: &attach_params
+  attach:
+    description: "Attach workspace"
+    type: boolean
+    default: false
+  attach_at:
+    description: "Where to attach the workspace"
+    type: string
+    default: "."
+
+attach_args: &attach_args
+  attach: << parameters.attach >>
+  attach_at: << parameters.attach_at >>
+
 docker_login_params: &docker_login_params
   login:
     description: "Login command to your repository (using environment variables from your secure context)"
@@ -14,16 +28,6 @@ docker_arg_params: &docker_arg_params
     description: "Either none, one or multiple comma-separated Docker build arguments to apply"
     type: string
     default: ""
-
-docker_attach_params: &docker_attach_params
-  attach:
-    description: "Attach workspace"
-    type: boolean
-    default: false
-  attach_at:
-    description: "Where to attach the workspace"
-    type: string
-    default: "."
 
 docker_build_params: &docker_build_params
   file:
@@ -55,8 +59,10 @@ docker_tags_params: &docker_tags_params
   tags:
     description: "Either one or multiple comma-separated Docker tags to apply and push"
     type: string
+    default: ""
 
 docker_build_args: &docker_build_args
+  <<: *attach_args
   # Remove this once CircleCI-Public/config-preview-sdk#15 is merged
   use_args: << parameters.use_args >>
   args: << parameters.args >>
@@ -65,8 +71,6 @@ docker_build_args: &docker_build_args
   prepare: << parameters.prepare >>
   path: << parameters.path >>
   base_tag: << parameters.base_tag >>
-  attach: << parameters.attach >>
-  attach_at: << parameters.attach_at >>
   add_labels: << parameters.add_labels >>
 
 docker_version_params: &docker_version_params
@@ -93,12 +97,11 @@ orbs:
         steps:
         - run:
             name: "Login to your origin Docker repository"
-            command: |
-              << parameters.login >>
+            command: << parameters.login >>
       build:
         parameters:
           <<: *docker_arg_params
-          <<: *docker_attach_params
+          <<: *attach_params
           <<: *docker_build_params
         steps:
         - checkout
@@ -127,51 +130,27 @@ orbs:
             # Use this instead once CircleCI-Public/config-preview-sdk#15 is merged
             # matches: ['([a-zA-Z][\w]*=[\w-\/.:]+)(,[a-zA-Z][\w]*=[\w-\/.:]+)*', "<< parameters.args >>"]
             steps:
-            - when:
-                condition: << parameters.add_labels >>
-                steps:
-                - run:
-                    name: Build Docker image with arguments and labels
-                    command: |
-                      buildarg=""
-                      args="<< parameters.args >>,BUILD_DATE=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"`,VCS_REF=`git rev-parse --short HEAD`"
-                      for arg in $args; do
-                        buildarg="${buildarg} --build-arg ${arg}"
-                      done
-                      build="docker build ${buildarg} --cache-from=<< parameters.base_tag >> -f << parameters.file >> -t << parameters.base_tag >> << parameters.path >>"
-                      eval $build
-            - unless:
-                condition: << parameters.add_labels >>
-                steps:
-                - run:
-                    name: Build Docker image with arguments and without labels
-                    command: |
-                      buildarg=""
-                      args="<< parameters.args >>"
-                      for arg in $args; do
-                        buildarg="${buildarg} --build-arg ${arg}"
-                      done
-                      build="docker build ${buildarg} --cache-from=<< parameters.base_tag >> -f << parameters.file >> -t << parameters.base_tag >> << parameters.path >>"
-                      eval $build
+            - run:
+                name: Build Docker image with arguments and labels
+                command: |
+                  source ./env/load.sh | true
+                  buildarg=""
+                  args="<< parameters.args >><<# parameters.add_labels >>,BUILD_DATE=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"`,VCS_REF=`git rev-parse --short HEAD`<</ parameters.add_labels >>"
+                  for arg in $args; do
+                    buildarg="${buildarg} --build-arg ${arg}"
+                  done
+                  build="docker build ${buildarg} --cache-from=<< parameters.base_tag >> -f << parameters.file >> -t << parameters.base_tag >> << parameters.path >>"
+                  eval $build
         - unless:
             condition: << parameters.use_args >>
             # Use this instead once CircleCI-Public/config-preview-sdk#15 is merged
             # matches: ['([a-zA-Z][\w]*=[\w-\/.:]+)(,[a-zA-Z][\w]*=[\w-\/.:]+)*', "<< parameters.args >>"]
             steps:
-            - when:
-                condition: << parameters.add_labels >>
-                steps:
-                - run:
-                    name: Build Docker image without arguments and with labels
-                    command: |
-                      docker build --build-arg BUILD_DATE=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` --build-arg VCS_REF=`git rev-parse --short HEAD` --cache-from=<< parameters.base_tag >> -f << parameters.file >> -t << parameters.base_tag >> << parameters.path >>
-            - unless:
-                condition: << parameters.add_labels >>
-                steps:
-                - run:
-                    name: Build Docker image without arguments and without labels
-                    command: |
-                      docker build --cache-from=<< parameters.base_tag >> -f << parameters.file >> -t << parameters.base_tag >> << parameters.path >>
+            - run:
+                name: Build Docker image without arguments and with labels
+                command: |
+                  source ./env/load.sh | true
+                  docker build <<# parameters.add_labels >>--build-arg BUILD_DATE=`date -u +\"%Y-%m-%dT%H:%M:%SZ\"` --build-arg VCS_REF=`git rev-parse --short HEAD` <</ parameters.add_labels >>--cache-from=<< parameters.base_tag >> -f << parameters.file >> -t << parameters.base_tag >> << parameters.path >>
         - when:
             condition: << parameters.cache >>
             steps:
@@ -195,6 +174,7 @@ orbs:
         - run:
             name: Add Docker tags
             command: |
+              source ./env/load.sh | true
               tags="<< parameters.tags >>"
               for tag in $tags; do
                 docker tag << parameters.base_tag >> "$tag"
@@ -227,6 +207,7 @@ orbs:
         - deploy:
             name: Push application Docker image
             command: |
+              source ./env/load.sh | true
               tags="<< parameters.tags >>"
               for tag in $tags; do
                 docker push "$tag"
@@ -239,7 +220,7 @@ orbs:
           docker_version: << parameters.docker_version >>
         parameters:
           <<: *docker_arg_params
-          <<: *docker_attach_params
+          <<: *attach_params
           <<: *docker_build_params
           <<: *docker_version_params
         steps:
@@ -253,7 +234,7 @@ orbs:
           docker_version: << parameters.docker_version >>
         parameters:
           <<: *docker_arg_params
-          <<: *docker_attach_params
+          <<: *attach_params
           <<: *docker_build_params
           <<: *docker_tags_params
           <<: *docker_version_params
@@ -277,7 +258,7 @@ orbs:
           docker_version: << parameters.docker_version >>
         parameters:
           <<: *docker_arg_params
-          <<: *docker_attach_params
+          <<: *attach_params
           <<: *docker_build_params
           <<: *docker_tags_params
           <<: *docker_version_params
@@ -305,7 +286,7 @@ orbs:
           docker_version: << parameters.docker_version >>
         parameters:
           <<: *docker_arg_params
-          <<: *docker_attach_params
+          <<: *attach_params
           <<: *docker_build_params
           <<: *docker_tags_params
           <<: *docker_version_params
