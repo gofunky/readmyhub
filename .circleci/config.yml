@@ -258,7 +258,7 @@ orbs:
             name: Match the semantic version
             command: |
               source /usr/local/bin/envload
-              << parameters.variable >>=$(${<< parameters.variable >>} | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p')
+              << parameters.variable >>=$(echo "${<< parameters.variable >>}" | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p')
               echo "SET << parameters.variable >>: ${<< parameters.variable >>}"
               echo "${<< parameters.variable >>}" > ./env/<< parameters.variable >>.env
 
