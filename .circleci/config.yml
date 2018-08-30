@@ -396,6 +396,7 @@ orbs:
             <<: *envorb_args
             address: https://api.github.com/repos/<< parameters.repository >>/releases/latest
         - cmd:
+            <<: *envorb_args
             cmd: "${<< parameters.variable >>} | grep -o '\"tag_name\": \"\\K.*?(?=\")'"
         - match_version:
             <<: *envorb_args
@@ -420,6 +421,7 @@ orbs:
             <<: *envorb_args
             <<: *envorb_prepare_args
         - cmd:
+            <<: *envorb_args
             cmd: cd ${<< parameters.repository >>} && git describe --abbrev=0 --tags
         - match_version:
             <<: *envorb_args
