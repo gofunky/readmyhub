@@ -816,6 +816,7 @@ workflows:
         name: build_release
         <<: *readmyhub_job
         <<: *tag_filter
+        attach: true
         use_args: true
         args: "VERSION=${TAG_VERSION}"
         tags: "gofunky/readmyhub:stable,gofunky/readmyhub:${TAG_VERSION}"
@@ -825,7 +826,8 @@ workflows:
         name: build_git_release
         <<: *readmyhub_job
         <<: *tag_filter
-        file: "Dockerfile-git"
+        attach: true
+        file: "Dockerfile.git"
         use_args: true
         args: "BASE_VERSION=${TAG_VERSION}"
         tags: "gofunky/readmyhub:stable-git,gofunky/readmyhub:${TAG_VERSION}-git"
