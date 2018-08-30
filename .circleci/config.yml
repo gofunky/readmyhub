@@ -423,7 +423,7 @@ orbs:
             checkout: true
         - cmd:
             <<: *envorb_args
-            cmd: cd ${<< parameters.repository >>} && git describe --abbrev=0 --tags
+            cmd: cd << parameters.repository >> && git describe --abbrev=0 --tags
         - match_version:
             <<: *envorb_args
         - complete:
