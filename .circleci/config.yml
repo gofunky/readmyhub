@@ -794,7 +794,7 @@ workflows:
         name: build_git
         <<: *readmyhub_job
         <<: *master_filter
-        file: "Dockerfile-git"
+        file: "Dockerfile.git"
         tags: "gofunky/readmyhub:git"
         requires:
           - build_latest
