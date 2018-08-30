@@ -783,12 +783,12 @@ tag_filter: &tag_filter
 version: 2.1
 workflows:
   build_latest:
+    <<: *master_filter
     jobs:
     - dockerorb/build_test_push:
         name: build_latest
         <<: *readmyhub_job
         tags: "gofunky/readmyhub:latest"
-        <<: *master_filter
     - dockerorb/build_test_push:
         name: build_git
         <<: *readmyhub_job
@@ -796,15 +796,14 @@ workflows:
         tags: "gofunky/readmyhub:git"
         requires:
           - build_latest
-        <<: *master_filter
     - readmyhuborb/update:
         name: readme
-        <<: *master_filter
         version: 1.1.0
         context: docker-hub
         requires:
           - build_git
   build_release:
+    <<: *tag_filter
     jobs:
     - envorb/git_tag:
         name: release_tag
@@ -816,7 +815,8 @@ workflows:
         use_args: true
         args: "VERSION=${TAG_VERSION}"
         tags: "gofunky/readmyhub:stable,gofunky/readmyhub:${TAG_VERSION}"
-        <<: *tag_filter
+        requires:
+        - release_tag
     - dockerorb/build_test_push:
         name: build_git_release
         <<: *readmyhub_job
@@ -826,4 +826,4 @@ workflows:
         tags: "gofunky/readmyhub:stable-git,gofunky/readmyhub:${TAG_VERSION}-git"
         requires:
         - build_release
-        <<: *tag_filter
+        - release_tag
