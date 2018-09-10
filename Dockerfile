@@ -1,4 +1,4 @@
-FROM node:10.9-alpine
+FROM node:10.10-alpine
 MAINTAINER matfax <mat@fax.fyi>
 
 WORKDIR /app/
