@@ -58,13 +58,13 @@ workflows:
 
   build_latest:
     jobs:
-    - dockerorb/build_test_push:
+      - docker/build_test_push:
         name: build_latest
         <<: [*master_filter, *readmyhub_job]
         tags: "gofunky/readmyhub:latest"
         login: docker login -u $DOCKER_USR -p $DOCKER_PWD
 
-    - dockerorb/build_test_push:
+      - docker/build_test_push:
         name: build_git
         <<: [*master_filter, *readmyhub_job]
         file: "Dockerfile.git"
@@ -94,7 +94,7 @@ workflows:
         alpine_version: "3.8"
         variable: TAG_VERSION
 
-    - dockerorb/build_test_push:
+    - docker/build_test_push:
         name: build_release
         <<: [*tag_filter, *readmyhub_job]
         attach: true
@@ -103,7 +103,7 @@ workflows:
         login: docker login -u $DOCKER_USR -p $DOCKER_PWD
         requires: [release_tag]
 
-    - dockerorb/build_test_push:
+    - docker/build_test_push:
         name: build_git_release
         <<: [*tag_filter, *readmyhub_job]
         attach: true
