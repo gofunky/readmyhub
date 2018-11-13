@@ -1,5 +1,5 @@
 FROM node:11.1-alpine
-MAINTAINER matfax <mat@fax.fyi>
+LABEL maintainer="mat@fax.fyi"
 
 WORKDIR /app/
 

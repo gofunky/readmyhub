@@ -1,5 +1,5 @@
 ARG BASE_VERSION=latest
 FROM gofunky/readmyhub:${BASE_VERSION}
-MAINTAINER matfax <mat@fax.fyi>
+LABEL maintainer="mat@fax.fyi"
 
-RUN apk add --no-cache --upgrade git openssh ca-certificates
+RUN apk add --no-cache --upgrade git openssh ca-certificates grep
