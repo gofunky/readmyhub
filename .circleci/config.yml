@@ -59,32 +59,32 @@ workflows:
   build_latest:
     jobs:
       - docker/build_test_push:
-        name: build_latest
-        <<: [*master_filter, *readmyhub_job]
-        tags: "gofunky/readmyhub:latest"
-        login: docker login -u $DOCKER_USR -p $DOCKER_PWD
+          name: build_latest
+          <<: [*master_filter, *readmyhub_job]
+          tags: "gofunky/readmyhub:latest"
+          login: docker login -u $DOCKER_USR -p $DOCKER_PWD
 
       - docker/build_test_push:
-        name: build_git
-        <<: [*master_filter, *readmyhub_job]
-        file: "Dockerfile.git"
-        compose: docker-compose.test.git.yml
-        tags: "gofunky/readmyhub:git"
-        login: docker login -u $DOCKER_USR -p $DOCKER_PWD
-        requires: [build_latest]
+          name: build_git
+          <<: [*master_filter, *readmyhub_job]
+          file: "Dockerfile.git"
+          compose: docker-compose.test.git.yml
+          tags: "gofunky/readmyhub:git"
+          login: docker login -u $DOCKER_USR -p $DOCKER_PWD
+          requires: [build_latest]
 
       - orbtools/env-pack-publish:
-        name: publish_latest_orb
-        context: orb-tools
-        version: "dev:${CIRCLE_BUILD_NUM}"
-        <<: *master_filter
+          name: publish_latest_orb
+          context: orb-tools
+          version: "dev:${CIRCLE_BUILD_NUM}"
+          <<: *master_filter
 
-    #- readmyhuborb/update:
-    #    name: readme
-    #    <<: *master_filter
-    #    version: 1.1.0
-    #    context: docker-hub
-    #    requires: [build_git]
+      #- readmyhuborb/update:
+      #    name: readme
+      #    <<: *master_filter
+      #    version: 1.1.0
+      #    context: docker-hub
+      #    requires: [build_git]
 
   build_release:
     jobs:
