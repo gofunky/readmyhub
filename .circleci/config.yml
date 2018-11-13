@@ -73,7 +73,7 @@ workflows:
         login: docker login -u $DOCKER_USR -p $DOCKER_PWD
         requires: [build_latest]
 
-    - orbtools/env-pack-publish:
+      - orbtools/env-pack-publish:
         name: publish_latest_orb
         context: orb-tools
         version: "dev:${CIRCLE_BUILD_NUM}"
