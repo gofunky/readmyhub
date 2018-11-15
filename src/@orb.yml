@@ -25,7 +25,7 @@ executors:
     parameters:
       <<: *readmyhub_params
     docker:
-      - image: gofunky/readmyhub:{{TAG_VERSION}}-git
+      - image: gofunky/readmyhub:{{.TAG_VERSION}}-git
     working_directory: /data
     environment:
       README_PATH: /data/<< parameters.file >>
