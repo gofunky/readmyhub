@@ -2,4 +2,4 @@ version: '3.7'
 services:
   sut:
     image: readmyhub
-    command: ["git --version"]
+    command: ["git", "--version"]

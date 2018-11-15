@@ -49,7 +49,7 @@ workflows:
       - docker/build_test:
           name: test_latest
           <<: [*pr_filter, *readmyhub_job]
-          tags: "gofunky/readmyhub::latest"
+          tags: "gofunky/readmyhub:latest"
 
       - docker/build_test:
           name: test_git
@@ -72,7 +72,7 @@ workflows:
           <<: [*master_filter, *readmyhub_job]
           file: "Dockerfile.git"
           compose: docker-compose.test.git.yml
-          tags: "gofunky/readmyhub:git"
+          tags: "gofunky/readmyhub:latest-git,gofunky/readmyhub:git"
           login: docker login -u $DOCKER_USR -p $DOCKER_PWD
           requires: [build_latest]
 
