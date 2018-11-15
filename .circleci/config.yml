@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   orbtools: gofunky/orbtools@0.3.0
-  envorb: gofunky/envorb@0.3.5
+  envorb: gofunky/envorb@0.3.6
   docker: gofunky/docker@0.1.2
   #readmyhuborb: gofunky/readmyhub@dev
 
@@ -36,12 +36,15 @@ pr_filter: &pr_filter
       ignore:
         - master
 
+use_alpine_version: &use_alpine_version
+  alpine_version: "3.8"
+
 workflows:
   test_latest:
     jobs:
       - orbtools/check:
           name: check_pull_request
-          <<: *pr_filter
+          <<: [*pr_filter, *use_alpine_version]
 
       - docker/build_test:
           name: test_latest
@@ -75,8 +78,7 @@ workflows:
 
       - envorb/value:
           name: latest_version
-          alpine_version: "3.8"
-          <<: *master_filter
+          <<: [*master_filter, *use_alpine_version]
           variable: TAG_VERSION
           value: "latest"
 
@@ -84,7 +86,7 @@ workflows:
           name: publish_latest_orb
           context: orb-tools
           version: "dev:${CIRCLE_BUILD_NUM}"
-          <<: *master_filter
+          <<: [*master_filter, *use_alpine_version]
           requires: [latest_version]
 
       #- readmyhuborb/update:
@@ -98,8 +100,7 @@ workflows:
     jobs:
     - envorb/git_tag:
         name: release_tag
-        <<: *tag_filter
-        alpine_version: "3.8"
+        <<: [*tag_filter, *use_alpine_version]
         variable: TAG_VERSION
 
     - docker/build_test_push:
@@ -124,5 +125,5 @@ workflows:
     - orbtools/env-pack-publish:
         name: publish_release_orb
         context: orb-tools
-        <<: *tag_filter
+        <<: [*tag_filter, *use_alpine_version]
         requires: [release_tag, build_git_release]
