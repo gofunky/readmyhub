@@ -9,7 +9,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/gofunky/git.svg)
 ![GitHub License](https://img.shields.io/github/license/gofunky/readmyhub.svg)
 
-This Docker image enables you to push README.md files to the Docker Hub.
+This Docker image allows you to push README.md files to the Docker Hub.
 
 ## How to use?
 
@@ -27,6 +27,22 @@ docker run --rm \
 
 That's it.
 
+### As CircleCI orb
+
+Define a `docker-hub` context with your secrets `DOCKER_USR` and `DOCKER_PWD`.
+
+```yaml
+orbs:
+  readmyhub: gofunky/readmyhub@volatile
+
+workflows:
+  my_workflow:
+    jobs:
+      - readmyhub/update:
+          context: docker-hub
+```
+
+Check the [docs](https://circleci.com/orbs/registry/orb/gofunky/readmyhub) for all configuration arguments.
 
 ### Environment variables
 

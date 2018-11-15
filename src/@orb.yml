@@ -1,5 +1,7 @@
 version: 2.1
 
+description: Allows you to push README.md files to the Docker Hub.
+
 readmyhub_params: &readmyhub_params
   file:
     description: "Path to the README.md file"
