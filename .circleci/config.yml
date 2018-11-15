@@ -125,4 +125,5 @@ workflows:
         name: publish_release_orb
         context: orb-tools
         <<: [*tag_filter, *use_alpine_version]
+        version: "${TAG_VERSION}"
         requires: [release_tag, build_git_release]
