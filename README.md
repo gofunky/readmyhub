@@ -5,6 +5,7 @@
 [![Microbadger Version](https://images.microbadger.com/badges/version/gofunky/readmyhub:stable.svg)](https://microbadger.com/images/gofunky/readmyhub:stable "Docker Version")
 [![Microbadger Layers](https://images.microbadger.com/badges/image/gofunky/readmyhub:stable.svg)](https://microbadger.com/images/gofunky/readmyhub:stable "Docker Layers")
 [![Docker Pulls](https://img.shields.io/docker/pulls/gofunky/readmyhub.svg)](https://hub.docker.com/r/gofunky/readmyhub)
+[![Orb Docs](https://img.shields.io/badge/orb-docs-blue.svg)](https://circleci.com/orbs/registry/orb/gofunky/readmyhub)
 ![GitHub last commit](https://img.shields.io/github/last-commit/gofunky/git.svg)
 ![GitHub License](https://img.shields.io/github/license/gofunky/readmyhub.svg)
 

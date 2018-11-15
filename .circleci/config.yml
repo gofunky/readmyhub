@@ -1,10 +1,10 @@
 version: 2.1
 
 orbs:
-  orbtools: gofunky/orbtools@dev:163
+  orbtools: gofunky/orbtools@0.3.1
   envorb: gofunky/envorb@0.3.7
   docker: gofunky/docker@0.1.2
-  #readmyhuborb: gofunky/readmyhub@dev
+  readmyhuborb: gofunky/readmyhub@dev:129
 
 readmyhub_job: &readmyhub_job
   context: docker-hub
@@ -89,12 +89,11 @@ workflows:
           <<: [*master_filter, *use_alpine_version]
           requires: [latest_version]
 
-      #- readmyhuborb/update:
-      #    name: readme
-      #    <<: *master_filter
-      #    version: 1.1.0
-      #    context: docker-hub
-      #    requires: [build_git]
+      - readmyhuborb/update:
+          name: readme
+          <<: *master_filter
+          context: docker-hub
+          requires: [build_git]
 
   build_release:
     jobs:
