@@ -1,12 +1,13 @@
 version: 2.1
 
 orbs:
-  orbtools: gofunky/orbtools@0.3.1
-  envorb: gofunky/envorb@0.3.7
+  orbtools: gofunky/orbtools@0.3.2
+  envorb: gofunky/envorb@0.3.8
   docker: gofunky/docker@0.1.2
   readmyhub: gofunky/readmyhub@1.2.1
 
 readmyhub_job: &readmyhub_job
+  cache: true
   context: docker-hub
   base_tag: readmyhub
   add_labels: true
@@ -57,7 +58,19 @@ workflows:
           file: "Dockerfile.git"
           compose: docker-compose.test.git.yml
           tags: "gofunky/readmyhub:git"
+          add_labels: false
           requires: [test_latest]
+
+      - docker/build_test:
+          name: test_envload
+          <<: [*pr_filter, *readmyhub_job]
+          tags: "gofunky/readmyhub:envload"
+          add_labels: false
+          path: "./envorb"
+          compose: "./envorb/test/docker-compose.test.yml"
+          base_tag: envloadtest
+          args: "BASE=gofunky/readmyhub:git"
+          requires: [test_git]
 
   build_latest:
     jobs:
@@ -74,7 +87,20 @@ workflows:
           compose: docker-compose.test.git.yml
           tags: "gofunky/readmyhub:latest-git,gofunky/readmyhub:git"
           login: docker login -u $DOCKER_USR -p $DOCKER_PWD
+          add_labels: false
           requires: [build_latest]
+
+      - docker/build_test_push:
+          name: build_envload
+          <<: [*master_filter, *readmyhub_job]
+          tags: "gofunky/readmyhub:latest-envload,gofunky/readmyhub:envload"
+          login: docker login -u $DOCKER_USR -p $DOCKER_PWD
+          add_labels: false
+          path: "./envorb"
+          compose: "./envorb/test/docker-compose.test.yml"
+          base_tag: envloadtest
+          args: "BASE=gofunky/readmyhub:git"
+          requires: [build_git]
 
       - envorb/value:
           name: latest_version
@@ -119,11 +145,24 @@ workflows:
         args: "BASE_VERSION=${TAG_VERSION}"
         tags: "gofunky/readmyhub:stable-git,gofunky/readmyhub:${TAG_VERSION}-git"
         login: docker login -u $DOCKER_USR -p $DOCKER_PWD
+        add_labels: false
         requires: [release_tag, build_release]
+
+    - docker/build_test_push:
+        name: build_envload_release
+        <<: [*tag_filter, *readmyhub_job]
+        tags: "gofunky/readmyhub:stable-envload,gofunky/readmyhub:${TAG_VERSION}-envload"
+        login: docker login -u $DOCKER_USR -p $DOCKER_PWD
+        add_labels: false
+        path: "./envorb"
+        compose: "./envorb/test/docker-compose.test.yml"
+        base_tag: envloadtest
+        args: "BASE=gofunky/readmyhub:${TAG_VERSION}-git"
+        requires: [build_git_release]
 
     - orbtools/env-pack-publish:
         name: publish_release_orb
         context: orb-tools
         <<: [*tag_filter, *use_alpine_version]
         version: "${TAG_VERSION}"
-        requires: [release_tag, build_git_release]
+        requires: [release_tag, build_envload_release]
