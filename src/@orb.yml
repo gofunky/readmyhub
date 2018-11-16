@@ -92,8 +92,6 @@ jobs:
     executor:
       name: default
       file: << parameters.file >>
-      organization: << parameters.organization >>
-      repository: << parameters.repository >>
     parameters:
       <<: [*readmyhub_params, *readmyhub_update_params]
     steps:
