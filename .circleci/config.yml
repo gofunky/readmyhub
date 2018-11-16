@@ -4,7 +4,7 @@ orbs:
   orbtools: gofunky/orbtools@0.3.2
   envorb: gofunky/envorb@0.3.8
   docker: gofunky/docker@0.1.2
-  readmyhub: gofunky/readmyhub@1.2.1
+  readmyhub: gofunky/readmyhub@dev:168
 
 readmyhub_job: &readmyhub_job
   cache: true
