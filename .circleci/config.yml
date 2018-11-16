@@ -151,6 +151,7 @@ workflows:
     - docker/build_test_push:
         name: build_envload_release
         <<: [*tag_filter, *readmyhub_job]
+        attach: true
         tags: "gofunky/readmyhub:stable-envload,gofunky/readmyhub:${TAG_VERSION}-envload"
         login: docker login -u $DOCKER_USR -p $DOCKER_PWD
         add_labels: false
