@@ -2,25 +2,30 @@ version: 2.1
 
 description: Allows you to push README.md files to the Docker Hub.
 
+orbs:
+  envorb: gofunky/envorb@0.3.9
+
 readmyhub_params: &readmyhub_params
   file:
     description: "Path to the README.md file"
     type: string
     default: "README.md"
+
+readmyhub_update_params: &readmyhub_update_params
   organization:
-    description: "Docker Hub organization or user name"
+    description: >
+      Docker Hub organization or user name.
+      Environment variables from envorbs are accepted.
+      By default, the git organization is assumed.
     type: string
     default: ""
   repository:
-    description: "Docker Hub repository name"
+    description: >
+      Docker Hub repository name.
+      Environment variables from envorbs are accepted.
+      By default, the git repository name is assumed.
     type: string
     default: ""
-
-readmyhub_update_params: &readmyhub_update_params
-  derive_repo:
-    description: "Enable to automatically derive the Docker Hub repository from the GitHub repository"
-    type: boolean
-    default: true
 
 executors:
   default:
@@ -31,15 +36,12 @@ executors:
     working_directory: /data
     environment:
       README_PATH: /data/<< parameters.file >>
-      IFS: "/"
-      DOCKERHUB_ORG: << parameters.organization >>
-      DOCKERHUB_REPO: << parameters.repository >>
+
 commands:
   update:
     parameters:
       <<: *readmyhub_update_params
     steps:
-      - checkout
       - run:
           name: Check DOCKER_USR
           command: |
@@ -55,31 +57,35 @@ commands:
               exit 127
             fi
       - when:
-          condition: << parameters.derive_repo >>
+          condition: << parameters.organization >>
           steps:
-            - run:
-                name: Update README
-                command: |
-                  set -f
-                  URL=`git remote get-url origin`
-                  URL=`echo "$URL" | sed -e "s/^https:\/\///" -e "s/\.git//" | sed -e "s/^git@//"`
-                  URL=`echo "$URL" | sed -r 's/github.com:/github.com\//g'`
-                  set -- $URL
-                  DOCKERHUB_ORG=$2
-                  DOCKERHUB_REPO=$3
-                  export DOCKERHUB_USR=${DOCKER_USR}
-                  export DOCKERHUB_PWD=${DOCKER_PWD}
-                  node /app/index.js
-                  set +f
+            - envorb/value:
+                variable: DOCKERHUB_ORG
+                value: << parameters.organization >>
       - unless:
-          condition: << parameters.derive_repo >>
+          condition: << parameters.organization >>
           steps:
-            - run:
-                name: Update README
-                command: |
-                  export DOCKERHUB_USR=${DOCKER_USR}
-                  export DOCKERHUB_PWD=${DOCKER_PWD}
-                  node /app/index.js
+            - envorb/git_org:
+                variable: DOCKERHUB_ORG
+      - when:
+          condition: << parameters.repository >>
+          steps:
+            - envorb/value:
+                variable: DOCKERHUB_REPO
+                value: << parameters.repository >>
+      - unless:
+          condition: << parameters.repository >>
+          steps:
+            - envorb/git_name:
+                variable: DOCKERHUB_REPO
+      - run:
+          name: Upload README
+          command: |
+            source /usr/local/bin/envload
+            export DOCKERHUB_USR=${DOCKER_USR}
+            export DOCKERHUB_PWD=${DOCKER_PWD}
+            node /app/index.js
+
 jobs:
   update:
     description: "Push the given README.md to the Docker Hub"
@@ -89,8 +95,9 @@ jobs:
       organization: << parameters.organization >>
       repository: << parameters.repository >>
     parameters:
-      <<: *readmyhub_params
-      <<: *readmyhub_update_params
+      <<: [*readmyhub_params, *readmyhub_update_params]
     steps:
+      - checkout
       - update:
-          derive_repo: << parameters.derive_repo >>
+          organization: << parameters.organization >>
+          repository: << parameters.repository >>

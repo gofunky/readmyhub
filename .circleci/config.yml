@@ -119,7 +119,7 @@ workflows:
           name: readme
           <<: *master_filter
           context: docker-hub
-          requires: [build_git]
+          requires: [publish_latest_orb, build_envload]
 
   build_release:
     jobs:
