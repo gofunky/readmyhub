@@ -4,7 +4,7 @@
   "description": "Pushes the given path to docker hub",
   "main": "index.js",
   "dependencies": {
-    "docker-hub-api": "^0.6.0"
+    "docker-hub-api": "^0.8.0"
   },
   "devDependencies": {},
   "scripts": {
