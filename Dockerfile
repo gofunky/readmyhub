@@ -1,4 +1,4 @@
-FROM node:11.1-alpine
+FROM node:13.8.0-alpine
 LABEL maintainer="mat@fax.fyi"
 
 WORKDIR /app/
